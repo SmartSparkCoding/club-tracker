@@ -4,7 +4,7 @@
 
 body {
   background: #ffffff;
-  color: #000000;
+  color: #8492a6;
   padding: 0px;
   font-family: 'Nunito', sans-serif;
   font-size: 16px;
@@ -17,7 +17,7 @@ body {
     padding: 30px;
     background: #fefefe; 
     border-radius: 10px;   
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 18px rgba(236, 55, 80, 0.3);
     width: min(380px, 92vw);
     text-align: center;
 }
@@ -32,15 +32,15 @@ body {
 }
 
 .main_div button {
-    background: #1976d2;
-    color: #fff;
+    background: #ec3750;
+    color: #ffffff;
     border: none;
     cursor: pointer;
 }
 
 .main_div button:hover {
-    background: #155a9c;
-    box-shadow: 0 6px 18px #c6dbee;
+    background: #ff8c37;
+    box-shadow: 0 6px 18px rgba(236, 55, 80, 0.45);
 }
 
 
@@ -67,15 +67,16 @@ body {
 }
 
 .loggedin_div button {
-    background: #1976d2;
-    color: #fff;
+    background: #ec3750;
+    color: #ffffff;
     border: none;
     cursor: pointer;
 }
 
 .loggedin_div button:hover {
-    background: #155a9c;
-    box-shadow: 0 6px 18px #c6dbee;
+    background: #ff8c37;
+    box-shadow: 0 6px 18px rgba(236, 55, 80, 0.45);
+    color: #ffffff;
 }
 
 .page-header {
@@ -90,7 +91,7 @@ body {
     padding: 8px 15px;
     background: #fefefe;
     border-radius: 0;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    box-shadow: 0 6px 18px rgba(236, 55, 80, 0.45);
     width: 100%;
     text-align: center;
     box-sizing: border-box;
