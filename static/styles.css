@@ -5,6 +5,9 @@ body {
   margin: 0px;
   font-family: 'Nunito', sans-serif;
   font-size: 16px;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
 }
 
 .main_div {
@@ -12,8 +15,10 @@ body {
     margin: 8vh auto;
     padding: 30px;
     background: #fefefe; 
-    border-radius: 10px;
+    border-radius: 10px;   
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    width: min(380px, 92vw);
+    text-align: center;
 }
 
 .main_div input, .main_div button {
@@ -34,4 +39,5 @@ body {
 
 .main_div button:hover {
     background: #155a9c;
+    box-shadow: 0 6px 18px #c6dbee;
 }
