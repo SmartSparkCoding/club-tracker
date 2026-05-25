@@ -45,6 +45,7 @@ function login() {
 
 function logout() {
   firebase.auth().signOut().then(() => {
+    localStorage.setItem("allowedLogin", "false");
     window.location.href = "/";
   })
 }
