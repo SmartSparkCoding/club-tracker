@@ -15,12 +15,14 @@
         <input type="password" placeholder="Password..." id="password_field">
         <button onclick="login()">Login</button>
     </div>
-    
+
     <div class="loggedin_div" id="user_div">
         <h3>YAYYY! You successfully logged-in using Firebase.....</h3>
         <button onclick="logout()">Logout</button>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

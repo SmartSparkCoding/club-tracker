@@ -1,6 +1,37 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #ecdddd;
-    margin: 0;
-    padding: 20px;
+  background: #ffffff;
+  color: #000000;
+  padding: 0px;
+  margin: 0px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+}
+
+.main_div {
+    max-width: 380px;
+    margin: 8vh auto;
+    padding: 30px;
+    background: #fefefe; 
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.main_div input, .main_div button {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+.main_div button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.main_div button:hover {
+    background: #155a9c;
 }
