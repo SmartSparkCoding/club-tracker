@@ -17,8 +17,10 @@ firebase.initializeApp(firebaseConfig);
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         // User is signed in.
+        localStorage.setItem("allowedLogin", "true");
         document.getElementById('user_div').style.display = 'block'
         document.getElementById('login_div').style.display = 'none'
+        window.location.href = "/dashboard"
     }
     else {
         // No user is signed in.
@@ -47,4 +49,5 @@ function login() {
 
 function logout() {
   firebase.auth().signOut()
+  window.location.href = "/"
 }
