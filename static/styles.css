@@ -2,12 +2,11 @@ body {
   background: #ffffff;
   color: #000000;
   padding: 0px;
-  margin: 0px;
   font-family: 'Nunito', sans-serif;
   font-size: 16px;
   min-height: 100vh;
   display: grid;
-  place-items: center;
+  margin: 0;
 }
 
 .main_div {
@@ -77,4 +76,26 @@ body {
 .loggedin_div button:hover {
     background: #155a9c;
     box-shadow: 0 6px 18px #c6dbee;
+}
+
+.page-header {
+  max-width: 95%;
+  margin: 0 auto;
+  padding: 8px 15px;
+  background: #fefefe;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  width: 95%;
+  text-align: center;
+}
+
+.page-header h1 {
+    margin: 10px;
+}
+
+.page-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding-top: 72px; /* header */
 }
