@@ -1,17 +1,19 @@
+:root {
+    --header-h: 72px;
+}
+
 body {
   background: #ffffff;
   color: #000000;
   padding: 0px;
   font-family: 'Nunito', sans-serif;
   font-size: 16px;
-  min-height: 100vh;
-  display: grid;
   margin: 0;
 }
 
 .main_div {
     max-width: 380px;
-    margin: 8vh auto;
+        margin: 0 auto;
     padding: 30px;
     background: #fefefe; 
     border-radius: 10px;   
@@ -48,7 +50,7 @@ body {
 
 .loggedin_div {
     max-width: 380px;
-    margin: 8vh auto;
+    margin: 0 auto;
     padding: 30px;
     background: #fefefe; 
     border-radius: 10px;   
@@ -79,23 +81,35 @@ body {
 }
 
 .page-header {
-  max-width: 95%;
-  margin: 0 auto;
-  padding: 8px 15px;
-  background: #fefefe;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-  width: 95%;
-  text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: var(--header-h);
+    max-width: 100%;
+    margin: 0;
+    padding: 8px 15px;
+    background: #fefefe;
+    border-radius: 0;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .page-header h1 {
-    margin: 10px;
+        margin: 0;
+        line-height: 1;
 }
 
 .page-shell {
-    min-height: 100vh;
+        margin-top: var(--header-h);
+        min-height: calc(100vh - var(--header-h));
     display: grid;
     place-items: center;
-    padding-top: 72px; /* header */
+        overflow: auto;
 }
