@@ -38,7 +38,8 @@ def home():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template("dashboard.html")
+    user = "Jacob Navaratne"
+    return render_template("dashboard.html", user=user)
 
 
 if __name__ == '__main__':
