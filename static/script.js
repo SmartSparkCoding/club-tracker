@@ -14,7 +14,7 @@ firebase.initializeApp(firebaseConfig);
 
 // -------------------------------------------
 
-firebase.auth().onAuthStateChanged(function (user) {
+/* firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         // User is signed in.
         localStorage.setItem("allowedLogin", "true");
@@ -27,27 +27,24 @@ firebase.auth().onAuthStateChanged(function (user) {
         document.getElementById('user_div').style.display = 'none'
         document.getElementById('login_div').style.display = 'block'
     }   
-})
+}) */
 
 function login() {
   var userEmail = document.getElementById('email_field').value
   var userPass = document.getElementById('password_field').value
 
-  firebase
-    .auth()
-    .signInWithEmailAndPassword(userEmail, userPass)
+  firebase.auth().signInWithEmailAndPassword(userEmail, userPass)
+    .then(() => {
+      localStorage.setItem("allowedLogin", "true");
+      window.location.href = "/dashboard";
+    })
     .catch(function (error) {
-      // Handle Errors here.
-      var errorCode = error.code
-      var errorMessage = error.message
-
-      window.alert('Error : ' + errorMessage)
-
-      // ...
+      window.alert('Error : ' + error.message)
     })
 }
 
 function logout() {
-  firebase.auth().signOut()
-  window.location.href = "/"
+  firebase.auth().signOut().then(() => {
+    window.location.href = "/";
+  })
 }
