@@ -153,3 +153,36 @@ body {
   from { transform: translateX(24px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+.dashboard-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+  width: min(1100px, 95vw);
+  box-sizing: border-box;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 12px;
+  background: #ffffff;
+  /* box-shadow: 0 6px 18px rgba(236, 55, 80, 0.15); */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card button {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+.card button {
+    background: #ec3750;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
