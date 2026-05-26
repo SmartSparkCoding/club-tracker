@@ -49,3 +49,11 @@ function logout() {
     window.location.href = "/";
   })
 }
+
+function goToMembers() {
+  window.location.href = "/dashboard/members";
+}
+
+function goToDashboard() {
+  window.location.href = "/dashboard";
+}

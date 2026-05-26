@@ -41,6 +41,11 @@ def dashboard():
     user = "Jacob Navaratne"
     return render_template("dashboard.html", user=user)
 
+@app.route('/dashboard/members')
+def members():
+    user = "Jacob Navaratne"
+    return render_template("members.html", user=user)
+
 
 if __name__ == '__main__':
     init_db()
