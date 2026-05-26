@@ -24,25 +24,30 @@
     
     <main class="page-shell">
         <div class="loggedin_div" id="user_div">
-            <h2>Welcome to {{ club_name }}</h2> <!-- this will be at the top center, below the header -->
+            <h1>Welcome to {{ club_name }}</h1> <!-- this will be at the top center, below the header -->
+            <h2>Logged in as <strong>{{ user }}</strong></h2>
         </div>
         
                 <div class="dashboard-grid">
 
-                    <div class="card" id="members_button">
-                        <button onclick="goToMembers()">Members</button> 
+                    <div class="card" onclick="goToMembers()" role="button" tabindex="0">
+                        <img src="/static/members.png" alt="Members">
+                        <div class="card-footer">Members</div>
                     </div>
 
-                    <div class="card" id="allergies_button">
-                        <button onclick="goToAllergies()">Allergies</button>
+                    <div class="card" id="allergies_button" role="button" tabindex="0" onclick="goToAllergies()" onkeydown="if(event.key==='Enter'||event.key===' '){ event.preventDefault(); goToAllergies(); }">
+                        <img src="/static/allergies.png" alt="Allergies">
+                        <div class="card-footer">Allergies</div>
                     </div>
 
-                    <div class="card" id="projects_button">
-                        <button onclick="goToProjects()">Projects</button>
+                    <div class="card" id="projects_button" role="button" tabindex="0" onclick="goToProjects()" onkeydown="if(event.key==='Enter'||event.key===' '){ event.preventDefault(); goToProjects(); }">
+                        <img src="/static/projects.png" alt="Projects">
+                        <div class="card-footer">Projects</div>
                     </div>
 
-                    <div class="card" id="attendance_button">
-                        <button onclick="goToAttendance()">Attendance</button>
+                    <div class="card" id="attendance_button" role="button" tabindex="0" onclick="goToAttendance()" onkeydown="if(event.key==='Enter'||event.key===' '){ event.preventDefault(); goToAttendance(); }">
+                        <img src="/static/attendance.png" alt="Attendance">
+                        <div class="card-footer">Attendance</div>
                     </div>
 
                 </div>

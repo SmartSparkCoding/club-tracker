@@ -157,18 +157,51 @@ body {
 .dashboard-grid {
   display: grid;
   gap: 20px;
-  grid-template-columns: 1fr;
-  width: min(1100px, 95vw);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  width: 95%;
   box-sizing: border-box;
-}
-
-.card {
-  padding: 20px;
+  padding: 18px; /* space between cards and border */
+  border: 0px solid rgba(0,0,0,0.06);
   border-radius: 12px;
   background: #ffffff;
-  /* box-shadow: 0 6px 18px rgba(236, 55, 80, 0.15); */
-  width: 100%;
+  max-width: 1700px;
+  margin: 0 auto; /* center the grid container */
+}
+.card {
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  cursor: pointer;
+  user-select: none;
+  padding: 18px;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  background: #ffffff;
+  transition: box-shadow 0.12s ease, transform 0.12s ease;
+}
+.card:focus {
+  outline: 3px solid rgba(236,55,80,0.18);
+  outline-offset: 2px;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(236,55,80,0.12);
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.card .card-footer {
+  padding: 12px;
+  margin-top: 12px;
+  text-align: center;
 }
 
 .card button {
