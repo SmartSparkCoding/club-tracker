@@ -112,11 +112,25 @@ def attendance():
 
 @app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
 def edit_member(id):
-    first = request.form['first_name']
-    last = request.form['last_name']
+    # accept optional fields (email, first_name, last_name)
+    first = request.form.get('first_name')
+    last = request.form.get('last_name')
+    email = request.form.get('email')
     conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
-    c.execute("UPDATE members SET first_name=?, last_name=? WHERE id=?", (first,last,id))
-    conn.commit(); conn.close()
+    updates = []
+    params = []
+    if first is not None:
+        updates.append('first_name = ?'); params.append(first)
+    if last is not None:
+        updates.append('last_name = ?'); params.append(last)
+    if email is not None:
+        updates.append('email = ?'); params.append(email)
+    if updates:
+        sql = 'UPDATE members SET ' + ', '.join(updates) + ' WHERE id = ?'
+        params.append(id)
+        c.execute(sql, params)
+        conn.commit()
+    conn.close()
     return redirect(url_for('member_detail', id=id))
 
 @app.route('/dashboard/members/<int:id>')
