@@ -57,3 +57,15 @@ function goToMembers() {
 function goToDashboard() {
   window.location.href = "/dashboard";
 }
+
+function goToAllergies() {
+  window.location.href = "/dashboard/allergies";
+}
+
+function goToAttendance() {
+  window.location.href = "/dashboard/attendance";
+}
+
+function goToProjects() {
+  window.location.href = "/dashboard/projects";
+}

@@ -39,15 +39,33 @@ def home():
 @app.route('/dashboard')
 def dashboard():
     user = "Jacob Navaratne"
-    return render_template("dashboard.html", user=user)
+    club_name = "Ashford School Hack Club"
+    return render_template("dashboard.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/members')
 def members():
     user = "Jacob Navaratne"
-    return render_template("members.html", user=user)
+    club_name = "Ashford School Hack Club"
+    return render_template("members.html", user=user, club_name=club_name)
 
+@app.route('/dashboard/allergies')
+def allergies():
+    user = "Jacob Navaratne"
+    club_name = "Ashford School Hack Club"
+    return render_template("allergies.html", user=user, club_name=club_name)
+
+@app.route('/dashboard/projects')
+def projects():
+    user = "Jacob Navaratne"
+    club_name = "Ashford School Hack Club"
+    return render_template("projects.html", user=user, club_name=club_name)
+
+@app.route('/dashboard/attendance')
+def attendance():
+    user = "Jacob Navaratne"
+    club_name = "Ashford School Hack Club"
+    return render_template("attendance.html", user=user, club_name=club_name)
 
 if __name__ == '__main__':
     init_db()
     app.run(host="0.0.0.0",port=4500, debug=True)
-

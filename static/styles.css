@@ -4,7 +4,7 @@
 
 body {
   background: #ffffff;
-  color: #8492a6;
+  color: #338eda;
   padding: 0px;
   font-family: 'Nunito', sans-serif;
   font-size: 16px;
@@ -111,4 +111,45 @@ body {
     display: grid;
     place-items: center;
         overflow: auto;
+}
+
+.page-header button {
+    background: #ec3750;
+    color: #ffffff;
+    border: none;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.page-header button:hover {
+    background: #ff8c37;
+    box-shadow: 0 6px 18px rgba(236, 55, 80, 0.45);
+    color: #ffffff;
+}
+
+.dashboard-page .page-header {
+  justify-content: space-between;
+  padding: 8px 20px;
+}
+
+.dashboard-page .page-header h1 {
+  animation: titleIn 0.35s ease-out;
+}
+
+.dashboard-page .page-header button {
+  animation: buttonIn 0.35s ease-out;
+}  
+
+@keyframes titleIn {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes buttonIn {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
