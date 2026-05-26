@@ -33,36 +33,36 @@ def init_db():
 
 @app.route('/')
 def home():
-    user = "Jacob Navaratne"
+    user = "Club Leader"
     return render_template("signin.html", user=user)
 
 @app.route('/dashboard')
 def dashboard():
-    user = "Jacob Navaratne"
+    user = "Club Leader"
     club_name = "Ashford School Hack Club"
     return render_template("dashboard.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/members')
 def members():
-    user = "Jacob Navaratne"
+    user = "Club Leader"
     club_name = "Ashford School Hack Club"
     return render_template("members.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/allergies')
 def allergies():
-    user = "Jacob Navaratne"
+    user = "Club Leader"
     club_name = "Ashford School Hack Club"
     return render_template("allergies.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/projects')
 def projects():
-    user = "Jacob Navaratne"
+    user = "Club Leader"
     club_name = "Ashford School Hack Club"
     return render_template("projects.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/attendance')
 def attendance():
-    user = "Jacob Navaratne"
+    user = "Club Leader"
     club_name = "Ashford School Hack Club"
     return render_template("attendance.html", user=user, club_name=club_name)
 
