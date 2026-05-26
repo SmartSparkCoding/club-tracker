@@ -16,6 +16,10 @@ def init_db():
                  year INTEGER,
                  created_at TEXT DEFAULT CURRENT_TIMESTAMP
                  )''')
+    # ensure `email` column exists (safe ALTER without UNIQUE)
+    cols = [r[1] for r in c.execute("PRAGMA table_info(members)").fetchall()]
+    if 'email' not in cols:
+        c.execute("ALTER TABLE members ADD COLUMN email TEXT")
 
     c.execute('''CREATE TABLE IF NOT EXISTS allergies (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -119,7 +123,7 @@ def edit_member(id):
 def member_detail(id):
     conn = sqlite3.connect('club_tracker.db')
     c = conn.cursor()
-    c.execute("SELECT first_name,last_name,year,created_at FROM members WHERE id=?", (id,))
+    c.execute("SELECT first_name,last_name,year,created_at,email FROM members WHERE id=?", (id,))
     member = c.fetchone()
     c.execute("""SELECT ad.day_date, coalesce(ar.present,0) as present
                  FROM attendance_days ad
@@ -133,26 +137,38 @@ def member_detail(id):
     conn.close()
     return render_template('member_detail.html', member=member, attendance=attendance, projects=projects, allergies=allergies)
 
-@app.route('/dashboard/members')
-def members():
+
+
+@app.route('/dashboard/members/<int:id>/allergies/add', methods=['POST'])
+def add_allergy(id):
+    allergy_text = request.form.get('allergy_text')
+    severity = request.form.get('severity')
     conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
-    c.execute("SELECT id, first_name, last_name, created_at FROM members ORDER BY last_name, first_name")
-    rows = c.fetchall(); conn.close()
-    return render_template('members.html', members=rows)
+    c.execute("INSERT INTO allergies(member_id, allergy_text, severity) VALUES (?,?,?)", (id, allergy_text, severity))
+    conn.commit(); conn.close()
+    return redirect(url_for('member_detail', id=id))
 
-@app.route('/dashboard/members/<int:id>')
-def member_detail(id):
-    c = sqlite3.connect('club_tracker.db').cursor()
-    c.execute("SELECT first_name,last_name,year,created_at FROM members WHERE id=?", (id,))
-    member = c.fetchone()
-    # fetch attendance, projects, allergies similarly...
-    return render_template('member_detail.html', member=member, attendance=..., projects=..., allergies=...)
 
-@app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
-def edit_member(id):
-    first = request.form['first_name']; last = request.form['last_name']
-    c = sqlite3.connect('club_tracker.db').cursor(); c.execute("UPDATE members SET first_name=?, last_name=? WHERE id=?", (first,last,id))
-    sqlite3.connect('club_tracker.db').commit(); return redirect(url_for('member_detail', id=id))
+@app.route('/dashboard/projects/<int:project_id>/add_member', methods=['POST'])
+def add_project_member(project_id):
+    member_id = int(request.form['member_id'])
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("INSERT OR IGNORE INTO project_members(project_id, member_id) VALUES (?,?)", (project_id, member_id))
+    conn.commit(); conn.close()
+    return redirect(url_for('member_detail', id=member_id))
+
+
+@app.route('/dashboard/attendance/record', methods=['POST'])
+def record_attendance():
+    day = request.form['day_date']  # YYYY-MM-DD
+    member_id = int(request.form['member_id'])
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("INSERT OR IGNORE INTO attendance_days(day_date) VALUES (?)", (day,))
+    c.execute("SELECT id FROM attendance_days WHERE day_date=?", (day,))
+    day_id = c.fetchone()[0]
+    c.execute("INSERT OR REPLACE INTO attendance_records(day_id, member_id, present) VALUES (?,?,1)", (day_id, member_id))
+    conn.commit(); conn.close()
+    return redirect(url_for('member_detail', id=member_id))
 # run the app :D
 
 if __name__ == '__main__':

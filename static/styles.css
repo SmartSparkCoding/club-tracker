@@ -240,7 +240,12 @@ body {
 
 .member-name { 
   font-weight:700; 
-  font-size:1.05rem; 
+  font-size:1.3rem; 
+}
+
+.member-detail h2 {
+  font-size:1.6rem;
+  margin: 0 0 8px;
 }
 
 .member-meta { 

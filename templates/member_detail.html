@@ -17,14 +17,50 @@
 
 
 <body class="dashboard-page">
-    <header class="page-header">
-        <h1>AS Hack Club Tracker</h1>
-        <button onclick="goToDashboard()">Back</button> <!-- this will be at the top right -->
-    </header>
+        <header class="page-header">
+                <h1>AS Hack Club Tracker</h1>
+                <button onclick="goToMembers()">Back</button> <!-- this will be at the top right -->
+        </header>
 
+        <main class="page-shell">
+            {% if member %}
+            <section class="member-detail">
+                <h2>{{ member[0] }} {{ member[1] }}</h2>
+                <div class="member-meta">Email: {{ member[4] }} · Year: {{ member[2] }} · Joined: {{ member[3] }}</div>
+            </section>
 
-    <h3>Last 10 attendance</h3>
-    <table>{% for day, present in attendance %}<tr><td>{{ day }}</td><td>{{ 'Yes' if present else 'No' }}</td></tr>{% endfor %}</table>
+            <h3>Last 10 attendance</h3>
+            <table>
+                <thead><tr><th>Date</th><th>Present</th></tr></thead>
+                <tbody>
+                {% for day, present in attendance %}
+                    <tr><td>{{ day }}</td><td>{{ 'Yes' if present else 'No' }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <h3>Projects</h3>
+            <ul>
+                {% for p in projects %}
+                    <li>{{ p[1] }}{% if p[2] %} — <a href="{{ p[2] }}">repo</a>{% endif %}{% if p[3] %} — <a href="{{ p[3] }}">demo</a>{% endif %}</li>
+                {% else %}
+                    <li>No projects</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Allergies</h3>
+            <ul>
+                {% for a in allergies %}
+                    <li>{{ a[1] }}{% if a[2] %} ({{ a[2] }}){% endif %}</li>
+                {% else %}
+                    <li>No allergies recorded</li>
+                {% endfor %}
+            </ul>
+
+            {% else %}
+            <p>Member not found.</p>
+            {% endif %}
+        </main>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>

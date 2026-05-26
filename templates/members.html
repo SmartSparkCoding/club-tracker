@@ -22,14 +22,16 @@
         <button onclick="goToDashboard()">Back</button> <!-- this will be at the top right -->
     </header>
 
-    <div class="members-list">
+    <main class="page-shell">
+      <div class="members-list">
         {% for id, first, last, created in members %}
         <a class="member-card" href="{{ url_for('member_detail', id=id) }}">
             <div class="member-name">{{ first }} {{ last }}</div>
             <div class="member-meta">Joined: {{ created }}</div>
         </a>
         {% endfor %}
-    </div>
+      </div>
+    </main>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
