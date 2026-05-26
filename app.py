@@ -8,28 +8,63 @@ def init_db():
     conn = sqlite3.connect('club_tracker.db')
     c = conn.cursor()
     c.execute('PRAGMA foreign_keys = ON')
+
     c.execute('''CREATE TABLE IF NOT EXISTS members (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 email TEXT UNIQUE NOT NULL,
-                 display_name TEXT,
+                 first_name TEXT,
+                 last_name TEXT,
+                 year INTEGER,
                  created_at TEXT DEFAULT CURRENT_TIMESTAMP
                  )''')
+
     c.execute('''CREATE TABLE IF NOT EXISTS allergies (
                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 name TEXT UNIQUE NOT NULL,
-                 description TEXT
-                 )''')
-    c.execute('''CREATE TABLE IF NOT EXISTS member_allergies (
                  member_id INTEGER NOT NULL,
-                 allergy_id INTEGER NOT NULL,
+                 allergy_text TEXT NOT NULL,
                  severity TEXT,
-                 notes TEXT,
-                 PRIMARY KEY (member_id, allergy_id),
-                 FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
-                 FOREIGN KEY (allergy_id) REFERENCES allergies(id) ON DELETE CASCADE
+                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                 FOREIGN KEY(member_id) REFERENCES members(id) ON DELETE CASCADE
                  )''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS projects (
+                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 title TEXT,
+                 github_repo TEXT,
+                 demo_link TEXT,
+                 shipped_to TEXT,
+                 payout_received TEXT,
+                 payout_amount REAL,
+                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                 )''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS project_members (
+                 project_id INTEGER NOT NULL,
+                 member_id INTEGER NOT NULL,
+                 PRIMARY KEY (project_id, member_id),
+                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+                 FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+                 )''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS attendance_days (
+                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 day_date TEXT UNIQUE NOT NULL,
+                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                 )''')
+
+    c.execute('''CREATE TABLE IF NOT EXISTS attendance_records (
+                 day_id INTEGER NOT NULL,
+                 member_id INTEGER NOT NULL,
+                 present INTEGER NOT NULL DEFAULT 1,
+                 notes TEXT,
+                 PRIMARY KEY (day_id, member_id),
+                 FOREIGN KEY (day_id) REFERENCES attendance_days(id) ON DELETE CASCADE,
+                 FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+                 )''')
+
     conn.commit()
     conn.close()
+
+# define routes
 
 @app.route('/')
 def home():
@@ -65,6 +100,8 @@ def attendance():
     user = "Club Leader"
     club_name = "Ashford School Hack Club"
     return render_template("attendance.html", user=user, club_name=club_name)
+
+# run the app :D
 
 if __name__ == '__main__':
     init_db()

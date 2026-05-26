@@ -12,4 +12,4 @@ Run:
 `source venv/bin/activate`
 `python3 app.py`
 
-The server is now activate!
+The server is now activated!
