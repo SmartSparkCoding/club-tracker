@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 
 app = Flask(__name__)
@@ -79,9 +79,14 @@ def dashboard():
 
 @app.route('/dashboard/members')
 def members():
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("SELECT id, first_name, last_name, created_at FROM members ORDER BY last_name, first_name")
+    rows = c.fetchall()
+    conn.close()
     user = "Club Leader"
     club_name = "Ashford School Hack Club"
-    return render_template("members.html", user=user, club_name=club_name)
+    return render_template("members.html", user=user, club_name=club_name, members=rows)
 
 @app.route('/dashboard/allergies')
 def allergies():
@@ -101,6 +106,53 @@ def attendance():
     club_name = "Ashford School Hack Club"
     return render_template("attendance.html", user=user, club_name=club_name)
 
+@app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
+def edit_member(id):
+    first = request.form['first_name']
+    last = request.form['last_name']
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("UPDATE members SET first_name=?, last_name=? WHERE id=?", (first,last,id))
+    conn.commit(); conn.close()
+    return redirect(url_for('member_detail', id=id))
+
+@app.route('/dashboard/members/<int:id>')
+def member_detail(id):
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("SELECT first_name,last_name,year,created_at FROM members WHERE id=?", (id,))
+    member = c.fetchone()
+    c.execute("""SELECT ad.day_date, coalesce(ar.present,0) as present
+                 FROM attendance_days ad
+                 LEFT JOIN attendance_records ar ON ad.id=ar.day_id AND ar.member_id=?
+                 ORDER BY ad.day_date DESC LIMIT 10""", (id,))
+    attendance = c.fetchall()
+    c.execute("""SELECT p.* FROM projects p JOIN project_members pm ON p.id=pm.project_id WHERE pm.member_id=?""", (id,))
+    projects = c.fetchall()
+    c.execute("SELECT id,allergy_text,severity FROM allergies WHERE member_id=?", (id,))
+    allergies = c.fetchall()
+    conn.close()
+    return render_template('member_detail.html', member=member, attendance=attendance, projects=projects, allergies=allergies)
+
+@app.route('/dashboard/members')
+def members():
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("SELECT id, first_name, last_name, created_at FROM members ORDER BY last_name, first_name")
+    rows = c.fetchall(); conn.close()
+    return render_template('members.html', members=rows)
+
+@app.route('/dashboard/members/<int:id>')
+def member_detail(id):
+    c = sqlite3.connect('club_tracker.db').cursor()
+    c.execute("SELECT first_name,last_name,year,created_at FROM members WHERE id=?", (id,))
+    member = c.fetchone()
+    # fetch attendance, projects, allergies similarly...
+    return render_template('member_detail.html', member=member, attendance=..., projects=..., allergies=...)
+
+@app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
+def edit_member(id):
+    first = request.form['first_name']; last = request.form['last_name']
+    c = sqlite3.connect('club_tracker.db').cursor(); c.execute("UPDATE members SET first_name=?, last_name=? WHERE id=?", (first,last,id))
+    sqlite3.connect('club_tracker.db').commit(); return redirect(url_for('member_detail', id=id))
 # run the app :D
 
 if __name__ == '__main__':
