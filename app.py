@@ -1,5 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
+import os
+import json
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
 
 app = Flask(__name__)
 
@@ -78,7 +83,7 @@ def home():
 @app.route('/dashboard')
 def dashboard():
     user = "Club Leader"
-    club_name = "Ashford School Hack Club"
+    club_name = fetch_club_name_from_api()
     return render_template("dashboard.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/members')
@@ -89,25 +94,25 @@ def members():
     rows = c.fetchall()
     conn.close()
     user = "Club Leader"
-    club_name = "Ashford School Hack Club"
+    club_name = fetch_club_name_from_api()
     return render_template("members.html", user=user, club_name=club_name, members=rows)
 
 @app.route('/dashboard/allergies')
 def allergies():
     user = "Club Leader"
-    club_name = "Ashford School Hack Club"
+    club_name = fetch_club_name_from_api()
     return render_template("allergies.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/projects')
 def projects():
     user = "Club Leader"
-    club_name = "Ashford School Hack Club"
+    club_name = fetch_club_name_from_api()
     return render_template("projects.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/attendance')
 def attendance():
     user = "Club Leader"
-    club_name = "Ashford School Hack Club"
+    club_name = fetch_club_name_from_api()
     return render_template("attendance.html", user=user, club_name=club_name)
 
 @app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
@@ -183,6 +188,30 @@ def record_attendance():
     c.execute("INSERT OR REPLACE INTO attendance_records(day_id, member_id, present) VALUES (?,?,1)", (day_id, member_id))
     conn.commit(); conn.close()
     return redirect(url_for('member_detail', id=member_id))
+
+def fetch_club_name_from_api():
+    fallback_name = "Error Loading Club Name"
+
+    club_name = os.getenv("CLUB_NAME", fallback_name)
+    token = os.getenv("CLUBAPI_TOKEN", "").strip()
+
+    query = urlencode({"name": club_name})
+    url = f"https://club.api.hackclub.com/club?{query}"
+
+    headers = {"Accept": "application/json"}
+    if token: 
+        headers["Authorization"] = token
+
+    req = Request(url, headers=headers, method="GET")
+
+    try: 
+        with urlopen(req, timeout=6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            api_name = data.get("club_name") or data.get("fields", {}).get("club_name")
+            return api_name or club_name
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError):
+        return club_name
+
 # run the app :D
 
 if __name__ == '__main__':

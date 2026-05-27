@@ -1,0 +1,1226 @@
+Open Search Search
+KEYBOARD SHORTCUT:COMMAND⌘ K
+
+Introduction
+
+API Documentation
+HTTP METHOD:  GET
+
+Get total number of clubs
+HTTP METHOD:  GET
+
+Get amount of clubs in a country
+HTTP METHOD:  GET
+
+Get amount of clubs at a level
+HTTP METHOD:  GET
+
+Get club info from name
+HTTP METHOD:  GET
+
+Get club info from join code
+HTTP METHOD:  GET
+
+Get club ambassador
+HTTP METHOD:  GET
+
+Get leader from email
+HTTP METHOD:  GET
+
+Change club leader's email
+HTTP METHOD:  POST
+
+Change the club leader
+HTTP METHOD:  POST
+
+Get leader from Slack ID
+HTTP METHOD:  GET
+
+Get club ships
+HTTP METHOD:  GET
+
+Get member's club and email by name
+HTTP METHOD:  GET
+
+Update member information
+HTTP METHOD:  POST
+
+Delete a member
+HTTP METHOD:  DEL
+
+Get member info by leave code
+HTTP METHOD:  GET
+
+Get member's club by email
+HTTP METHOD:  GET
+
+Get member's club by Slack ID
+HTTP METHOD:  GET
+
+Create a new member
+HTTP METHOD:  POST
+
+Get club members
+HTTP METHOD:  GET
+
+Get club level
+HTTP METHOD:  GET
+
+Change club level
+HTTP METHOD:  POST
+
+Get club status
+HTTP METHOD:  GET
+
+Change club status
+HTTP METHOD:  POST
+
+Get club suspension status
+HTTP METHOD:  GET
+
+Update club suspension status
+HTTP METHOD:  POST
+
+Get club tokens
+HTTP METHOD:  GET
+
+Update club tokens
+HTTP METHOD:  POST
+
+Send announcement to club members
+HTTP METHOD:  POST
+Open API Client
+Powered by Scalar
+
+v1.0.0
+OpenAPI 3.0.0
+Clubs API
+
+Download OpenAPI Document
+
+Download OpenAPI Document
+API for Hack Club clubs, built in Lua using Astra.
+Server
+Server:
+https://clubapi.hackclub.com
+Production server
+
+Authentication
+Optional
+Select Auth Type
+No authentication selected
+Client Libraries
+Python http.client
+API Documentation​Copy link
+Returns the API documentation page.
+Responses
+200
+HTML documentation page
+Request Example for GET/
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /)
+STATUS: 200
+No Body
+HTML documentation page
+Get total number of clubs​Copy link
+Returns the total number of clubs registered.
+Responses
+
+200
+Successful response
+application/json
+Request Example for GET/clubs
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/clubs")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /clubs)
+STATUS: 200
+
+{
+  "totalClubs": 1
+}
+
+Successful response
+Get amount of clubs in a country​Copy link
+Returns the count of clubs in the specified country.
+Query Parameters
+countryCopy link to country
+Type: string
+required
+The country to filter by (e.g. "USA", "India")
+Responses
+
+200
+Successful response
+application/json
+Request Example for GET/clubs/country
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/clubs/country?country=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /clubs/country)
+STATUS: 200
+
+{
+  "clubs": 1
+}
+
+Successful response
+Get amount of clubs at a level​Copy link
+Returns the count of clubs at the specified level.
+Query Parameters
+levelCopy link to level
+Type: string
+required
+The level to filter by (e.g. "1", "2", "3")
+Responses
+
+200
+Successful response
+application/json
+Request Example for GET/clubs/level
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/clubs/level?level=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /clubs/level)
+STATUS: 200
+
+{
+  "clubs": 1
+}
+
+Successful response
+Get club info from name​Copy link
+
+Auth Optional
+Returns information about a club. Authentication is optional. Authenticated requests return more fields.
+Query Parameters
+nameCopy link to name
+Type: string
+required
+Name of the club
+Responses
+
+200
+Club information
+application/json
+Request Example for GET/club
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/club?name=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /club)
+STATUS: 200
+
+{
+  "club_name": null,
+  "Est. # of Attendees": 1,
+  "call_meeting_days": "string",
+  "call_meeting_length": 1,
+  "club_status": "string",
+  "id": "string",
+  "leader_slack_id": "string",
+  "level": "string",
+  "venue_address_country": "string"
+}
+
+Club information
+Get club info from join code​Copy link
+
+Auth Required
+Returns information about a club by its join code. Requires Read permissions.
+Query Parameters
+codeCopy link to code
+Type: string
+required
+Join code of the club
+Responses
+
+200
+Club information
+application/json
+
+400
+Missing code parameter
+application/json
+
+401
+Unauthorized
+application/json
+
+404
+Club not found
+application/json
+Request Example for GET/club/code
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "GET",
+    "/club/code?code=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /club/code)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+STATUS: 404
+
+{}
+
+Club information
+Get club ambassador​Copy link
+Returns the email and Slack ID of the ambassador assigned to a club.
+Query Parameters
+nameCopy link to name
+Type: string
+required
+Name of the club
+Responses
+
+200
+Ambassador information
+application/json
+
+400
+Missing parameter or no ambassador assigned
+application/json
+
+404
+Club or ambassador not found
+application/json
+Request Example for GET/club/ambassador
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/club/ambassador?name=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /club/ambassador)
+STATUS: 200
+STATUS: 400
+STATUS: 404
+
+{
+  "email": "string",
+  "slackId": "string"
+}
+
+Ambassador information
+Get leader from email​Copy link
+
+Auth Optional
+Checks if a leader exists by email. Authentication is optional.
+
+Authenticated: Returns the club name associated with the leader.
+Unauthenticated: Returns true/false indicating existence.
+Query Parameters
+emailCopy link to email
+Type: string
+Format: email
+required
+Email of the leader
+Responses
+
+200
+Leader information
+application/json
+Request Example for GET/leader
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/leader?email=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /leader)
+STATUS: 200
+
+{
+  "club_name": null
+}
+
+Leader information
+Change club leader's email​Copy link
+
+Auth Required
+Updates a leader's email address. Requires Write permissions.
+Query Parameters
+emailCopy link to email
+Type: string
+Format: email
+required
+Current email of the leader
+new_emailCopy link to new_email
+Type: string
+Format: email
+required
+New email for the leader
+Responses
+
+200
+Email updated successfully
+application/json
+
+400
+Missing email parameter or leader not found
+application/json
+
+401
+Unauthorized
+application/json
+Request Example for POST/leader
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "POST",
+    "/leader?email=&new_email=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(post /leader)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+
+{
+  "new_email": "string"
+}
+
+Email updated successfully
+Change the club leader​Copy link
+
+Auth Required
+Replaces the current club leader with a new one. Creates a new leader record, deletes the old one, and returns the generated Airtable automation form value. Requires Write permissions.
+Query Parameters
+clubCopy link to club
+Type: string
+required
+Name of the club
+new_emailCopy link to new_email
+Type: string
+Format: email
+required
+Email of the new leader
+old_emailCopy link to old_email
+Type: string
+Format: email
+required
+Email of the old leader to be removed
+Responses
+
+200
+Leader changed successfully
+application/json
+
+400
+Missing parameter or entity not found
+application/json
+
+401
+Unauthorized
+application/json
+Request Example for POST/leader/change
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "POST",
+    "/leader/change?club=&new_email=&old_email=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(post /leader/change)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+
+{
+  "success": true,
+  "new_leader_id": "string",
+  "update_leader_info_form": null
+}
+
+Leader changed successfully
+Get leader from Slack ID​Copy link
+
+Auth Optional
+Checks if a leader exists by Slack ID. Authentication is optional.
+
+Authenticated: Returns the club name associated with the leader.
+Unauthenticated: Returns true/false indicating existence.
+Query Parameters
+slackidCopy link to slackid
+Type: string
+required
+Slack ID of the leader
+Responses
+
+200
+Leader information
+application/json
+Request Example for GET/leader/slack
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/leader/slack?slackid=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /leader/slack)
+STATUS: 200
+
+{
+  "club_name": null,
+  "club_status": "string"
+}
+
+Leader information
+Get club ships​Copy link
+
+Auth Optional
+Returns the list of ships (projects) associated with a club. Authentication is optional. Authenticated requests return more fields.
+Query Parameters
+club_nameCopy link to club_name
+Type: string
+required
+Name of the club
+Responses
+
+200
+List of ships
+application/json
+Request Example for GET/ships
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/ships?club_name=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /ships)
+STATUS: 200
+
+[
+  {
+    "workshop": "string",
+    "Rating": 1,
+    "code_url": "string",
+    "club_name (from Clubs)": [
+      "string"
+    ],
+    "YSWS–Name (from Unified YSWS Database)": [
+      "string"
+    ]
+  }
+]
+
+List of ships
+Get member's club and email by name​Copy link
+
+Auth Required
+Returns the club and email associated with a member by name. Requires Read permissions.
+Query Parameters
+nameCopy link to name
+Type: string
+required
+Name of the member
+Responses
+
+200
+Member information including club and email
+application/json
+
+400
+Missing name parameter
+application/json
+
+401
+Unauthorized
+application/json
+
+404
+Member not found
+application/json
+Request Example for GET/member
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "GET",
+    "/member?name=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /member)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+STATUS: 404
+
+{
+  "name": "string",
+  "email": "hello@example.com"
+}
+
+Member information including club and email
+Update member information​Copy link
+
+Auth Required
+Updates a member's name and/or email. Requires Write permissions.
+Query Parameters
+nameCopy link to name
+Type: string
+required
+Current name of the member to update
+new_nameCopy link to new_name
+Type: string
+New name for the member
+new_emailCopy link to new_email
+Type: string
+Format: email
+New email for the member
+Responses
+
+200
+Member updated successfully
+application/json
+
+400
+Missing name parameter, no updates provided, or member not found
+application/json
+
+401
+Unauthorized
+application/json
+Request Example for POST/member
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "POST",
+    "/member?name=&new_name=&new_email=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(post /member)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+
+{
+  "name": "string",
+  "email": "hello@example.com"
+}
+
+Member updated successfully
+Delete a member​Copy link
+
+Auth Required
+Deletes a member by name. Requires Write permissions.
+Query Parameters
+nameCopy link to name
+Type: string
+required
+Name of the member to delete
+Responses
+
+200
+Member deleted successfully
+application/json
+
+400
+Missing name parameter or failed to delete
+application/json
+
+401
+Unauthorized
+application/json
+
+404
+Member not found
+application/json
+Request Example for DELETE/member
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "DELETE",
+    "/member?name=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(delete /member)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+STATUS: 404
+
+{
+  "deleted": true,
+  "id": "string"
+}
+
+Member deleted successfully
+Get member info by leave code​Copy link
+
+Auth Required
+Returns member information by their leave code. Requires Read permissions.
+Query Parameters
+codeCopy link to code
+Type: string
+required
+Leave code of the member
+Responses
+
+200
+Member information
+application/json
+
+400
+Missing code parameter
+application/json
+
+401
+Unauthorized
+application/json
+
+404
+Member not found
+application/json
+Request Example for GET/member/code
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "GET",
+    "/member/code?code=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /member/code)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+STATUS: 404
+
+{
+  "name": "string",
+  "club_name": [
+    "string"
+  ],
+  "email": "hello@example.com"
+}
+
+Member information
+Get member's club by email​Copy link
+
+Auth Required
+Returns the club name associated with a member by email. Requires Read permissions.
+Query Parameters
+emailCopy link to email
+Type: string
+Format: email
+required
+Email of the member
+Responses
+
+200
+Club name associated with the member
+application/json
+
+400
+Missing email parameter
+application/json
+
+401
+Unauthorized
+application/json
+
+404
+Member not found
+application/json
+Request Example for GET/member/email
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "GET",
+    "/member/email?email=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /member/email)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+STATUS: 404
+
+string
+
+Club name associated with the member
+Get member's club by Slack ID​Copy link
+
+Auth Required
+Returns the club name associated with a member by Slack ID. Requires Read permissions.
+Query Parameters
+slackidCopy link to slackid
+Type: string
+required
+Slack ID of the member
+Responses
+
+200
+Club name associated with the member
+application/json
+
+400
+Missing slackid parameter
+application/json
+
+401
+Unauthorized
+application/json
+
+404
+Member not found
+application/json
+Request Example for GET/member/slack
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "GET",
+    "/member/slack?slackid=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /member/slack)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+STATUS: 404
+
+string
+
+Club name associated with the member
+Create a new member​Copy link
+
+Auth Required
+Creates a new member with the specified name, email, and join code. Requires Write permissions.
+Query Parameters
+nameCopy link to name
+Type: string
+required
+Name of the new member
+emailCopy link to email
+Type: string
+Format: email
+required
+Email of the new member
+join_codeCopy link to join_code
+Type: string
+required
+Join code of the club to associate the member with
+Responses
+
+200
+Member created successfully
+application/json
+
+400
+Missing required parameters or failed to create
+application/json
+
+401
+Unauthorized
+application/json
+Request Example for POST/member/create
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "POST",
+    "/member/create?name=&email=&join_code=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(post /member/create)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+
+{
+  "id": "string",
+  "name": "string",
+  "email": "hello@example.com"
+}
+
+Member created successfully
+Get club members​Copy link
+
+Auth Required
+Returns the list of member names for the specified club. Requires Read permissions.
+Query Parameters
+club_nameCopy link to club_name
+Type: string
+required
+Name of the club
+Responses
+
+200
+Club members
+application/json
+
+401
+Unauthorized
+application/json
+
+404
+Club not found
+application/json
+Request Example for GET/members
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "GET",
+    "/members?club_name=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /members)
+STATUS: 200
+STATUS: 401
+STATUS: 404
+
+{
+  "members": [
+    "string"
+  ]
+}
+
+Club members
+Get club level​Copy link
+Returns the level of the specified club.
+Query Parameters
+club_nameCopy link to club_name
+Type: string
+required
+Name of the club
+Responses
+
+200
+Club level
+application/json
+Request Example for GET/level
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+conn.request("GET", "/level?club_name=")
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(get /level)
+STATUS: 200
+
+{
+  "level": "string"
+}
+
+Club level
+Change club level​Copy link
+
+Auth Required
+Updates the level of a club. Requires Write permissions.
+Query Parameters
+club_nameCopy link to club_name
+Type: string
+required
+Name of the club
+levelCopy link to level
+Type: string
+required
+New level for the club
+Responses
+
+200
+Level updated successfully
+application/json
+
+400
+Missing parameters or club not found
+application/json
+
+401
+Unauthorized
+application/json
+Request Example for POST/level
+Python http.client
+import http.client
+
+conn = http.client.HTTPSConnection("clubapi.hackclub.com")
+
+headers = {
+  "Authorization": "YOUR_SECRET_TOKEN"
+}
+
+conn.request(
+    "POST",
+    "/level?club_name=&level=",
+    headers=headers,
+)
+
+response = conn.getresponse()
+print(response.read().decode())
+
+conn.close()
+
+
+Test Request
+(post /level)
+STATUS: 200
+STATUS: 400
+STATUS: 401
+
+{
+  "new_level": "string"
+}
+
+Level updated successfully
