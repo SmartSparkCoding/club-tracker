@@ -31,11 +31,39 @@ body {
     box-sizing: border-box;
 }
 
-.main_div button {
+.main_div button, .add-member-btn {
     background: #ec3750;
     color: #ffffff;
     border: none;
     cursor: pointer;
+}
+
+.add-member-btn {
+  display: inline-flex;
+  width: auto;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 10px 16px;
+  margin: 0 auto 16px;
+  border-radius: 8px;
+}
+
+.member-form-page {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - var(--header-h));
+  padding: 24px;
+}
+
+.member-form-card {
+  width: min(420px, 92vw);
+  margin: 0;
+}
+
+.member-form-card h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
 }
 
 .main_div button:hover {
@@ -129,6 +157,24 @@ body {
     background: #ff8c37;
     box-shadow: 0 6px 18px rgba(236, 55, 80, 0.45);
     color: #ffffff;
+}
+
+.header-button {
+  background: #ec3750;
+  color: #ffffff;
+  border: none;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.header-button:hover {
+  background: #ff8c37;
+  box-shadow: 0 6px 18px rgba(236, 55, 80, 0.45);
+  color: #ffffff;
 }
 
 .dashboard-page .page-header {

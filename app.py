@@ -189,6 +189,33 @@ def record_attendance():
     conn.commit(); conn.close()
     return redirect(url_for('member_detail', id=member_id))
 
+@app.route('/dashboard/members/new')
+def add_member_form():
+    user = "Club Leader"
+    club_name = fetch_club_name_from_api()
+    return render_template("member_new.html", user=user, club_name=club_name)
+
+@app.route('/dashboard/members/new', methods=['POST'])
+def add_member():
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    year = request.form['year']
+    email = request.form.get('email')
+
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO members (first_name, last_name, year, email) VALUES (?, ?, ?, ?)",
+        (first_name, last_name, year, email)
+    )
+    member_id = c.lastrowid
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('member_detail', id=member_id))
+
+# club api from HC - below is used to pull name (from env)
+
 def fetch_club_name_from_api():
     fallback_name = "Error Loading Club Name"
 

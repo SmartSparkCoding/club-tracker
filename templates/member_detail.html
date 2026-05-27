@@ -34,8 +34,7 @@
                         <p class="member-sub">Year {{ member[2] }} • Joined {{ member[3] }}</p>
                     </div>
                     <div class="member-actions">
-                        <a href="#" class="btn ghost" onclick="history.back(); return false;">Back</a>
-                        <button class="btn primary" onclick="document.getElementById('edit-email').scrollIntoView({behavior:'smooth'})">Edit</button>
+                        <button type="button" class="header-button" onclick="const editForm = document.getElementById('edit-email'); editForm.scrollIntoView({behavior:'smooth'}); editForm.querySelector('input[name=\'email\']').focus();">Edit</button>
                     </div>
                 </div>
 

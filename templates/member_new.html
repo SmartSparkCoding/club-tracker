@@ -19,20 +19,18 @@
 <body class="dashboard-page">
     <header class="page-header">
         <h1>AS Hack Club Tracker</h1>
-        <button onclick="goToDashboard()">Back</button> <!-- this will be at the top right -->
+        <button onclick="goToMembers()">Back</button> <!-- this will be at the top right -->
     </header>
 
-    <main class="page-shell">
-                <a class="add-member-btn" href="{{ url_for('add_member_form') }}">Add a Member</a>
-    
-      <div class="members-list">
-        {% for id, first, last, created in members %}
-        <a class="member-card" href="{{ url_for('member_detail', id=id) }}">
-            <div class="member-name">{{ first }} {{ last }}</div>
-            <div class="member-meta">Joined: {{ created }}</div>
-        </a>
-        {% endfor %}
-      </div>
+    <main class="page-shell member-form-page">
+        <form class="main_div member-form-card" method="POST" action="{{ url_for('add_member') }}">
+            <h3>Add New Member to {{ club_name }}</h3>
+            <input type="text" name="first_name" placeholder="First Name..." required>
+            <input type="text" name="last_name" placeholder="Last Name..." required>
+            <input type="number" name="year" placeholder="Year..." required>
+            <input type="email" name="email" placeholder="Email...">
+            <button type="submit">Add Member</button>
+        </form>
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
