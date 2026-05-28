@@ -6,8 +6,14 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv(Path(__file__).parent/'.env')
+
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError:
+    load_dotenv = None
+
+if load_dotenv is not None:
+    load_dotenv(Path(__file__).parent / '.env')
 
 app = Flask(__name__)
 

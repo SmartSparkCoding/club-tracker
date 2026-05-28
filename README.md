@@ -25,9 +25,12 @@ Run:
 `git pull`
 `python3 -m venv venv`
 `source venv/bin/activate`
+`pip install -r requirements.txt`
 `python3 app.py`
 
 The server is now activated!
+
+If `python-dotenv` is not installed, `app.py` still starts; it just skips loading `.env` automatically.
 
 ## Add Club Name for Club Details 
 
