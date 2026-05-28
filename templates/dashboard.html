@@ -22,14 +22,13 @@
 
 <body class="dashboard-page">
     <header class="page-header">
-        <h1>AS Hack Club Tracker</h1>
+        <h1>Welcome to <strong>{{ club_name }}</strong></h1>
         <button onclick="logout()">Logout</button> <!-- this will be at the top right -->
     </header>
     
     <main class="page-shell">
         <div class="loggedin_div" id="user_div">
-            <h1>Welcome to {{ club_name }}</h1> <!-- this will be at the top center, below the header -->
-            <h2>Logged in as <strong>{{ user }}</strong></h2>
+            <h2>Logged in as <strong>{{ hcb.manager_name }}</strong></h2>
         </div>
         
                 <div class="dashboard-grid">
