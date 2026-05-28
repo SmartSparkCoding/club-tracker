@@ -138,6 +138,7 @@ def attendance():
 @app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
 def edit_member(id):
     # accept optional fields (email, first_name, last_name)
+    club_name = fetch_club_name_from_api()
     first = request.form.get('first_name')
     last = request.form.get('last_name')
     email = request.form.get('email')
@@ -161,6 +162,7 @@ def edit_member(id):
 @app.route('/dashboard/members/<int:id>')
 def member_detail(id):
     conn = sqlite3.connect('club_tracker.db')
+    club_name = fetch_club_name_from_api()
     c = conn.cursor()
     c.execute("SELECT first_name,last_name,year,created_at,email FROM members WHERE id=?", (id,))
     member = c.fetchone()
@@ -181,6 +183,7 @@ def member_detail(id):
 @app.route('/dashboard/members/<int:id>/allergies/add', methods=['POST'])
 def add_allergy(id):
     allergy_text = request.form.get('allergy_text')
+    club_name = fetch_club_name_from_api()
     severity = request.form.get('severity')
     conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
     c.execute("INSERT INTO allergies(member_id, allergy_text, severity) VALUES (?,?,?)", (id, allergy_text, severity))
@@ -190,6 +193,7 @@ def add_allergy(id):
 
 @app.route('/dashboard/projects/<int:project_id>/add_member', methods=['POST'])
 def add_project_member(project_id):
+    club_name = fetch_club_name_from_api()
     member_id = int(request.form['member_id'])
     conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
     c.execute("INSERT OR IGNORE INTO project_members(project_id, member_id) VALUES (?,?)", (project_id, member_id))
@@ -201,6 +205,7 @@ def add_project_member(project_id):
 def record_attendance():
     day = request.form['day_date']  # YYYY-MM-DD
     member_id = int(request.form['member_id'])
+    club_name = fetch_club_name_from_api()
     conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
     c.execute("INSERT OR IGNORE INTO attendance_days(day_date) VALUES (?)", (day,))
     c.execute("SELECT id FROM attendance_days WHERE day_date=?", (day,))
@@ -231,6 +236,8 @@ def add_member():
     member_id = c.lastrowid
     conn.commit()
     conn.close()
+
+    club_name = fetch_club_name_from_api()
 
     return redirect(url_for('member_detail', id=member_id))
 
