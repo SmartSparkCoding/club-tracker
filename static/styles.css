@@ -379,9 +379,13 @@ body {
 /* Two-column content: left details, right panels */
 .member-grid {
   display:grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
   gap:1rem;
   align-items:start;
+}
+
+.member-grid > * {
+  min-width: 0;
 }
 
 /* Left column: details, projects, allergies */
@@ -411,6 +415,9 @@ body {
   border-radius:8px;
   background:#fff;
   border:1px solid rgba(2,6,23,0.03);
+  gap:0.75rem;
+  min-width:0;
+  overflow-wrap:anywhere;
 }
 
 /* small form elements */
@@ -418,12 +425,14 @@ body {
   display:flex;
   gap:0.5rem;
   align-items:center;
+  flex-wrap:wrap;
 }
 .inline-form input[type="text"], .inline-form input[type="email"], .inline-form select {
   padding:0.4rem 0.6rem;
   border-radius:8px;
   border:1px solid rgba(2,6,23,0.06);
   font-size:0.95rem;
+  min-width:0;
 }
 .inline-form button {
   padding:0.45rem 0.7rem;
@@ -440,4 +449,86 @@ body {
   .member-grid{grid-template-columns:1fr}
   .member-avatar{width:72px;height:72px;font-size:20px}
   .member-shell{padding:0.75rem}
+  .inline-form input[type="text"], .inline-form input[type="email"], .inline-form select, .inline-form button {
+    width:100%;
+  }
+}
+
+.hcb-bar {
+  width: calc(100% - 30px);
+  margin: 0 5px 1rem;
+  box-sizing: border-box;
+  background: #ec3750;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 10px rgba(2,6,23,0.04);
+}
+
+.hcb-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  flex: 0 0 48px;
+  background: #ec3750;
+}
+
+.hcb-meta {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow: hidden;
+}
+
+.hcb-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.hcb-slug {
+  font-weight: 400;
+  color: #ffffff;
+  font-size: 0.9rem;
+  margin-left: 0.35rem;
+}
+
+.hcb-stats {
+  font-size: 0.9rem;
+  color: #ffffff;
+  overflow-wrap: anywhere;
+}
+
+.hcb-actions { 
+  flex: 0 0 auto; 
+  margin-left:0.5rem; 
+}
+
+.hcb-link {
+  display: inline-block;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  background: #ec3750;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .hcb-bar {
+    flex-direction: column;
+    alight-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .hcb-actions { margin-left:0; display:flex; justify-content:flex-end; }
+  .hcb-link { width:100%; text-align:center; }
+  .hcb-logo { width:56px; height:56px; margin:0 auto 0.25rem auto; }
 }

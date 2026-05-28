@@ -44,7 +44,9 @@
                             <h3>About</h3>
                             <p><strong>Email:</strong> {{ member[4] or '—' }}</p>
                             <form id="edit-email" class="inline-form" method="POST" action="{{ url_for('edit_member', id=request.view_args['id']) }}">
-                                <input type="email" name="email" placeholder="email@example.com" value="{{ member[4] or '' }}">
+                                <input type="text" name="first_name" value="{{ member[0] }}" placeholder="First name">
+                                <input type="text" name="last_name" value="{{ member[1] }}" placeholder="Last name">
+                                <input type="email" name="email" value="{{ member[4] or '' }}" placeholder="Email">
                                 <button type="submit">Save</button>
                             </form>
                         </div>

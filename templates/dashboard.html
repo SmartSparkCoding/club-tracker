@@ -30,6 +30,21 @@
         <div class="loggedin_div" id="user_div">
             <h2>Logged in as <strong>{{ hcb.manager_name }}</strong></h2>
         </div>
+
+        {% if hcb %}
+        <div id="hcb_div" class="hcb-bar" role="region" aria-label="HCB overview">
+            {% if hcb.logo %}
+            <img class="hcb-logo" src="https://assets.hackclub.com/hcb-light.svg" alt="hcb logo">
+            {% endif %}
+            <div class="hcb-meta">
+                <div class="hcb-title">{{ hcb.org_name }} <span class="hcb-slug">({{ hcb.org_slug }})</span></div>
+                <div class="hcb-stats">Manager: {{ hcb.manager_name }} • Balance: <strong>{{ hcb.balance_display }}</strong> • Raised: {{ hcb.total_raised_display }}</div>
+            </div>
+            <div class="hcb-actions">
+                <a class="hcb-link" href="{{ hcb.hcb_url }}" target="_blank" rel="noopener">View on HCB</a>
+            </div>
+        </div>
+        {% endif %}
         
                 <div class="dashboard-grid">
 
