@@ -208,12 +208,12 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   width: 95%;
   box-sizing: border-box;
-  padding: 18px; /* space between cards and border */
+  padding: 18px; 
   border: 0px solid rgba(0,0,0,0.06);
   border-radius: 12px;
   background: #ffffff;
   max-width: 1700px;
-  margin: 0 auto; /* center the grid container */
+  margin: 0 auto; 
 }
 .card {
   box-sizing: border-box;
@@ -302,7 +302,6 @@ body {
   color:#666; 
 }
 
-/* Member detail page layout */
 .member-shell {
   max-width: 980px;
   margin: 1.5rem auto;
@@ -313,7 +312,16 @@ body {
   border: 1px solid rgba(13,23,36,0.06);
 }
 
-/* Top row: avatar + title + actions */
+.members-page { display:block !important; }
+.members-top { width:100%; max-width:1100px; margin:0 auto 8px; display:flex; justify-content:center; align-items:center; }
+.add-member-btn { display:inline-flex !important; margin:0 !important; }
+.members-list { width:100%; max-width:1100px; margin:0 auto; padding:0; }
+
+.page-shell.members-page { display:block !important; text-align:center !important; }
+.page-shell.members-page .members-list { text-align:left; margin-top:8px; }
+.page-shell.members-page .add-member-btn { display:inline-flex !important; margin:0 !important; }
+.page-shell.members-page .add-member-btn { margin-top: 12px !important; }
+
 .member-top {
   display: flex;
   gap: 1rem;
@@ -350,7 +358,6 @@ body {
   margin:0;
 }
 
-/* Action buttons */
 .member-actions {
   display:flex;
   gap:0.5rem;
@@ -378,7 +385,6 @@ body {
   border:1px dashed rgba(99,102,241,0.12);
 }
 
-/* Two-column content: left details, right panels */
 .member-grid {
   display:grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
@@ -390,7 +396,7 @@ body {
   min-width: 0;
 }
 
-/* Left column: details, projects, allergies */
+
 .card {
   background:#fafafa;
   border-radius:10px;
@@ -403,7 +409,6 @@ body {
   color:#0f172a;
 }
 
-/* lists */
 .list {
   display:flex;
   flex-direction:column;
@@ -422,7 +427,7 @@ body {
   overflow-wrap:anywhere;
 }
 
-/* small form elements */
+
 .inline-form {
   display:flex;
   gap:0.5rem;
@@ -446,7 +451,6 @@ body {
   cursor:pointer;
 }
 
-/* Responsive */
 @media (max-width:900px){
   .member-grid{grid-template-columns:1fr}
   .member-avatar{width:72px;height:72px;font-size:20px}
@@ -534,3 +538,13 @@ body {
   .hcb-link { width:100%; text-align:center; }
   .hcb-logo { width:56px; height:56px; margin:0 auto 0.25rem auto; }
 }
+
+.allergies-page { display:block !important; }
+.allergies-top { width:100%; max-width:1100px; margin:0 auto 8px; display:flex; justify-content:center; align-items:center; }
+.add-allergy-btn { display:inline-flex !important; margin:0 !important; }
+.allergies-list { width:100%; max-width:1100px; margin:0 auto; padding:0; }
+
+.page-shell.allergies-page { display:block !important; text-align:center !important; }
+.page-shell.allergies-page .allergies-list { text-align:left; margin-top:8px; }
+.page-shell.allergies-page .add-allergy-btn { display:inline-flex !important; margin:0 !important; }
+.page-shell.allergies-page .add-allergy-btn { margin-top: 12px !important; }
