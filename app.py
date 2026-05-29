@@ -128,9 +128,131 @@ def allergies():
 
 @app.route('/dashboard/projects')
 def projects():
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("SELECT id, title, created_at, payout_amount FROM projects ORDER BY created_at DESC")
+    rows = c.fetchall()
+    c.execute("SELECT COALESCE(SUM(payout_amount),0) FROM projects")
+    total = c.fetchone()[0] or 0
+    conn.close()
     user = "Club Leader"
     club_name = fetch_club_name_from_api()
-    return render_template("projects.html", user=user, club_name=club_name)
+    total_display = f"${float(total):,.2f}"
+    return render_template("projects.html", user=user, club_name=club_name, projects=rows, projects_total=total_display)
+
+@app.route('/dashboard/projects/new')
+def add_project_form():
+    user = "Club Leader"
+    club_name = fetch_club_name_from_api()
+    return render_template("project_new.html", user=user, club_name=club_name)
+
+@app.route('/dashboard/projects/new', methods=['POST'])
+def add_project():
+    title = request.form['title']
+    github_repo = request.form.get('github_repo')
+    demo_link = request.form.get('demo_link')
+    shipped_to = request.form.get('shipped_to')
+    payout_received = request.form.get('payout_received')
+    payout_amount = request.form.get('payout_amount') or None
+
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO projects (title, github_repo, demo_link, shipped_to, payout_received, payout_amount) VALUES (?, ?, ?, ?, ?, ?)",
+        (title, github_repo, demo_link, shipped_to, payout_received, payout_amount)
+    )
+    project_id = c.lastrowid
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('project_detail', id=project_id))
+
+@app.route('/dashboard/projects/<int:id>')
+def project_detail(id):
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute(
+        "SELECT id, title, github_repo, demo_link, shipped_to, payout_received, payout_amount, created_at FROM projects WHERE id=?",
+        (id,)
+    )
+    project = c.fetchone()
+
+    c.execute("""
+        SELECT m.id, m.first_name, m.last_name
+        FROM members m
+        JOIN project_members pm ON m.id = pm.member_id
+        WHERE pm.project_id=?
+        ORDER BY m.last_name, m.first_name
+    """, (id,))
+    members = c.fetchall()
+
+    c.execute("SELECT id, first_name, last_name FROM members ORDER BY last_name, first_name")
+    all_members = c.fetchall()
+
+    # compute display values
+    payout_amount = project[6] if project and project[6] is not None else 0
+    payout_display = f"${float(payout_amount):,.2f}"
+    conn.close()
+    user = "Club Leader"
+    club_name = fetch_club_name_from_api()
+    return render_template(
+        "project_detail.html",
+        user=user,
+        club_name=club_name,
+        project=project,
+        members=members,
+        all_members=all_members,
+        payout_display=payout_display
+    )
+
+@app.route('/dashboard/projects/<int:project_id>/add_member', methods=['POST'])
+def add_project_member(project_id):
+    member_id = int(request.form['member_id'])
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("INSERT OR IGNORE INTO project_members(project_id, member_id) VALUES (?,?)", (project_id, member_id))
+    conn.commit(); conn.close()
+    return redirect(url_for('project_detail', id=project_id))
+
+
+@app.route('/dashboard/projects/<int:project_id>/remove_member', methods=['POST'])
+def remove_project_member(project_id):
+    member_id = int(request.form['member_id'])
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("DELETE FROM project_members WHERE project_id=? AND member_id=?", (project_id, member_id))
+    conn.commit(); conn.close()
+    return redirect(url_for('project_detail', id=project_id))
+
+
+@app.route('/dashboard/projects/<int:id>/delete', methods=['POST'])
+def delete_project(id):
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("DELETE FROM projects WHERE id=?", (id,))
+    conn.commit(); conn.close()
+    return redirect(url_for('projects'))
+
+
+@app.route('/dashboard/projects/<int:id>/edit', methods=['POST'])
+def edit_project(id):
+    fields = ['title','github_repo','demo_link','shipped_to','payout_received','payout_amount']
+    updates = []
+    params = []
+    for f in fields:
+        v = request.form.get(f)
+        if v is not None and v != '':
+            updates.append(f+" = ?")
+            if f == 'payout_amount':
+                try:
+                    v = float(v)
+                except Exception:
+                    v = None
+            params.append(v)
+    if updates:
+        sql = 'UPDATE projects SET ' + ', '.join(updates) + ' WHERE id = ?'
+        params.append(id)
+        conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+        c.execute(sql, params)
+        conn.commit(); conn.close()
+    return redirect(url_for('project_detail', id=id))
 
 @app.route('/dashboard/attendance')
 def attendance():
@@ -198,15 +320,6 @@ def add_allergy(id):
     conn.commit(); conn.close()
     return redirect(url_for('member_detail', id=id))
 
-
-@app.route('/dashboard/projects/<int:project_id>/add_member', methods=['POST'])
-def add_project_member(project_id):
-    club_name = fetch_club_name_from_api()
-    member_id = int(request.form['member_id'])
-    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
-    c.execute("INSERT OR IGNORE INTO project_members(project_id, member_id) VALUES (?,?)", (project_id, member_id))
-    conn.commit(); conn.close()
-    return redirect(url_for('member_detail', id=member_id))
 
 
 @app.route('/dashboard/attendance/record', methods=['POST'])

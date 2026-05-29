@@ -1,0 +1,141 @@
+<script>
+    if (localStorage.getItem("allowedLogin") !== "true") {
+        window.location.href = "/";
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr1QkYcdrGrsagb5YQtie8v1qpZdVIwwTS_A&s" type="image/png">
+</head>
+
+<body class="dashboard-page">
+    <header class="page-header">
+        <h1>Welcome to <strong>{{ club_name }}</strong></h1>
+        <button onclick="goToProjects()">Back</button>
+    </header>
+
+    <main class="page-shell">
+        {% if project %}
+        <section class="member-shell">
+            <div class="member-top">
+                <div class="member-avatar">
+                    {{ project[1][:1] if project[1] else 'P' }}
+                </div>
+                <div class="member-meta">
+                    <h1 class="member-name">{{ project[1] }}</h1>
+                    <p class="member-sub">Created {{ project[7] }}</p>
+                </div>
+                <div class="member-actions">
+                    <form method="POST" action="{{ url_for('delete_project', id=project[0]) }}" style="display:inline">
+                        <button class="header-button" type="submit">Delete Project</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="member-grid">
+                <div>
+                    <div class="card">
+                        <h3>Project Info</h3>
+                        <p><strong>GitHub Repo:</strong>
+                            {% if project[2] %}
+                              <a href="{{ project[2] }}" target="_blank" rel="noopener">{{ project[2] }}</a>
+                            {% else %}
+                              —
+                            {% endif %}
+                            <button class="header-button" type="button" onclick="toggle('edit-github')">Edit</button>
+                        </p>
+                        <form id="edit-github" method="POST" action="{{ url_for('edit_project', id=project[0]) }}" style="display:none;margin-top:8px">
+                            <input type="text" name="github_repo" value="{{ project[2] or '' }}" placeholder="GitHub repo">
+                            <button type="submit" class="header-button">Save</button>
+                        </form>
+
+                        <p><strong>Demo Link:</strong>
+                            {% if project[3] %}
+                              <a href="{{ project[3] }}" target="_blank" rel="noopener">{{ project[3] }}</a>
+                            {% else %}
+                              —
+                            {% endif %}
+                            <button class="header-button" type="button" onclick="toggle('edit-demo')">Edit</button>
+                        </p>
+                        <form id="edit-demo" method="POST" action="{{ url_for('edit_project', id=project[0]) }}" style="display:none;margin-top:8px">
+                            <input type="text" name="demo_link" value="{{ project[3] or '' }}" placeholder="Demo link">
+                            <button type="submit" class="header-button">Save</button>
+                        </form>
+
+                        <p><strong>Shipped To:</strong> {{ project[4] or '—' }} <button class="header-button" type="button" onclick="toggle('edit-shipped')">Edit</button></p>
+                        <form id="edit-shipped" method="POST" action="{{ url_for('edit_project', id=project[0]) }}" style="display:none;margin-top:8px">
+                            <input type="text" name="shipped_to" value="{{ project[4] or '' }}" placeholder="Shipped to">
+                            <button type="submit" class="header-button">Save</button>
+                        </form>
+
+                        <p><strong>Payout Received:</strong> {{ project[5] or '—' }} <button class="header-button" type="button" onclick="toggle('edit-received')">Edit</button></p>
+                        <form id="edit-received" method="POST" action="{{ url_for('edit_project', id=project[0]) }}" style="display:none;margin-top:8px">
+                            <select name="payout_received">
+                                <option value="">Payout received?</option>
+                                <option value="Yes" {% if project[5]=='Yes' %}selected{% endif %}>Yes</option>
+                                <option value="No" {% if project[5]=='No' %}selected{% endif %}>No</option>
+                            </select>
+                            <button type="submit" class="header-button">Save</button>
+                        </form>
+
+                        <p><strong>Payout Amount:</strong> {{ payout_display }} <button class="header-button" type="button" onclick="toggle('edit-amount')">Edit</button></p>
+                        <form id="edit-amount" method="POST" action="{{ url_for('edit_project', id=project[0]) }}" style="display:none;margin-top:8px">
+                            <input type="number" step="0.01" name="payout_amount" value="{{ project[6] or '' }}" placeholder="Payout amount">
+                            <button type="submit" class="header-button">Save</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="margin-top:0.75rem">
+                        <h3>Members</h3>
+                                                <div class="list">
+                                                        {% for m in members %}
+                                                        <div class="row">
+                                                                <div>{{ m[1] }} {{ m[2] }}</div>
+                                                                <div>
+                                                                    <form method="POST" action="{{ url_for('remove_project_member', project_id=project[0]) }}" style="display:inline">
+                                                                        <input type="hidden" name="member_id" value="{{ m[0] }}">
+                                                                        <button type="submit" class="header-button">Remove</button>
+                                                                    </form>
+                                                                </div>
+                                                        </div>
+                                                        {% else %}
+                                                        <div class="row">No members yet</div>
+                                                        {% endfor %}
+                                                </div>
+
+                        <form class="inline-form" method="POST" action="{{ url_for('add_project_member', project_id=project[0]) }}" style="margin-top:0.6rem">
+                            <select name="member_id" required>
+                                <option value="" disabled selected>Select member</option>
+                                {% for id, first, last in all_members %}
+                                <option value="{{ id }}">{{ first }} {{ last }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% else %}
+        <p>Project not found.</p>
+        {% endif %}
+    </main>
+
+        <script>
+        function toggle(id){
+            const el = document.getElementById(id);
+            if(!el) return;
+            el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+        }
+        </script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
