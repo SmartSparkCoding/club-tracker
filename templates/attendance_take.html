@@ -1,0 +1,104 @@
+<script>
+    if (localStorage.getItem("allowedLogin") !== "true") {
+        window.location.href = "/";
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr1QkYcdrGrsagb5YQtie8v1qpZdVIwwTS_A&s" type="image/png">
+</head>
+
+<body class="dashboard-page">
+    <header class="page-header">
+        <h1>Welcome to <strong>{{ club_name }}</strong></h1>
+        <button onclick="goToAttendance()">Back</button>
+    </header>
+
+    <main class="page-shell attendance-page">
+        <section class="attendance-card">
+            <div class="attendance-heading">
+                <h2>{{ 'Edit This Weeks Attendance' if has_attendance else 'Take Attendance for This Week' }}</h2>
+                <p>Week starting {{ week_start }}</p>
+            </div>
+
+            {% if error %}
+            <div class="attendance-error">{{ error }}</div>
+            {% endif %}
+
+            <form id="attendance-form" method="POST" action="{{ url_for('save_attendance') }}">
+                <input type="hidden" name="week_start" value="{{ week_start }}">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Present</th>
+                            <th>Not Present</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for id, first_name, last_name in members %}
+                        {% set selected = existing.get(id) if existing else none %}
+                        <tr>
+                            <td class="attendance-name">{{ last_name }}, {{ first_name }}</td>
+                            <td>
+                                <label class="attendance-pill attendance-present {% if selected == 1 %}selected{% endif %}">
+                                    <input type="radio" name="attendance_{{ id }}" value="present" {% if selected == 1 %}checked{% endif %} onchange="updateAttendanceChoice(this)">
+                                    <span>Present</span>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="attendance-pill attendance-absent {% if selected == 0 %}selected{% endif %}">
+                                    <input type="radio" name="attendance_{{ id }}" value="absent" {% if selected == 0 %}checked{% endif %} onchange="updateAttendanceChoice(this)">
+                                    <span>Not Present</span>
+                                </label>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="attendance-actions">
+                    <button type="submit" class="attendance-save-btn">Save</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        function updateAttendanceChoice(input) {
+            const row = input.closest('tr');
+            if (!row) return;
+            row.querySelectorAll('.attendance-pill').forEach((pill) => pill.classList.remove('selected'));
+            const pill = input.closest('.attendance-pill');
+            if (pill) pill.classList.add('selected');
+        }
+
+        function validateAttendanceForm(event) {
+            const form = event.target;
+            const rows = form.querySelectorAll('tbody tr');
+            for (const row of rows) {
+                const present = row.querySelector('input[value="present"]:checked');
+                const absent = row.querySelector('input[value="absent"]:checked');
+                if (!present && !absent) {
+                    event.preventDefault();
+                    alert('You have not marked everyone in yet.');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        document.getElementById('attendance-form').addEventListener('submit', validateAttendanceForm);
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

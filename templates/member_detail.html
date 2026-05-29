@@ -60,7 +60,9 @@
                                         <div style="font-weight:700">{{ p[1] }}</div>
                                         <div style="font-size:0.85rem;color:#64748b">{{ p[3] or '' }}</div>
                                     </div>
-                                    <div style="font-size:0.85rem;color:#475569">View</div>
+                                    <div>
+                                        <a class="header-button" href="{{ url_for('project_detail', id=p[0]) }}">View</a>
+                                    </div>
                                 </div>
                                 {% else %}
                                 <div class="row">No projects yet</div>

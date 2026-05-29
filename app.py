@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from pathlib import Path
+from datetime import date, timedelta
 
 try:
     from dotenv import load_dotenv
@@ -257,9 +258,72 @@ def edit_project(id):
 
 @app.route('/dashboard/attendance')
 def attendance():
+    week_start = get_week_start()
     user = "Club Leader"
     club_name = fetch_club_name_from_api()
-    return render_template("attendance.html", user=user, club_name=club_name)
+    has_attendance = attendance_week_exists(week_start)
+    button_text = "Edit This Weeks Attendance" if has_attendance else "Take Attendance for This Week"
+    return render_template(
+        "attendance.html",
+        user=user,
+        club_name=club_name,
+        week_start=week_start,
+        has_attendance=has_attendance,
+        button_text=button_text,
+    )
+
+@app.route('/dashboard/attendance/take')
+def attendance_take():
+    week_start = get_week_start()
+    members = get_members_for_attendance()
+    existing = get_attendance_for_week(week_start)
+    user = "Club Leader"
+    club_name = fetch_club_name_from_api()
+    has_attendance = attendance_week_exists(week_start)
+    return render_template(
+        "attendance_take.html",
+        user=user,
+        club_name=club_name,
+        week_start=week_start,
+        members=members,
+        existing=existing,
+        has_attendance=has_attendance,
+    )
+
+@app.route('/dashboard/attendance/save', methods=['POST'])
+def save_attendance():
+    week_start = request.form.get('week_start') or get_week_start()
+    members = get_members_for_attendance()
+    selections = {}
+    for member_id, first_name, last_name in members:
+        value = request.form.get(f'attendance_{member_id}')
+        if value not in ('present', 'absent'):
+            existing = get_attendance_for_week(week_start)
+            user = "Club Leader"
+            club_name = fetch_club_name_from_api()
+            return render_template(
+                "attendance_take.html",
+                user=user,
+                club_name=club_name,
+                week_start=week_start,
+                members=members,
+                existing=existing,
+                has_attendance=attendance_week_exists(week_start),
+                error="You have not marked everyone in yet.",
+            ), 400
+        selections[member_id] = 1 if value == 'present' else 0
+
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("INSERT OR IGNORE INTO attendance_days(day_date) VALUES (?)", (week_start,))
+    c.execute("SELECT id FROM attendance_days WHERE day_date=?", (week_start,))
+    day_id = c.fetchone()[0]
+    c.execute("DELETE FROM attendance_records WHERE day_id=?", (day_id,))
+    for member_id, present in selections.items():
+        c.execute("INSERT INTO attendance_records(day_id, member_id, present) VALUES (?,?,?)", (day_id, member_id, present))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('attendance'))
 
 @app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
 def edit_member(id):
@@ -499,6 +563,55 @@ def get_projects_total():
     total = c.fetchone()[0] or 0
     conn.close()
     return total
+
+
+def get_common_context():
+    return {
+        "user": "Club Leader",
+        "club_name": fetch_club_name_from_api(),
+        "hcb": getHCBData(),
+        "total_projects": get_projects_total(),
+    }
+
+
+def get_week_start(today=None):
+    if today is None:
+        today = date.today()
+    start = today - timedelta(days=today.weekday())
+    return start.isoformat()
+
+
+def attendance_week_exists(week_start):
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("SELECT id FROM attendance_days WHERE day_date=?", (week_start,))
+    row = c.fetchone()
+    conn.close()
+    return row is not None
+
+
+def get_members_for_attendance():
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("SELECT id, first_name, last_name FROM members ORDER BY last_name, first_name")
+    rows = c.fetchall()
+    conn.close()
+    return rows
+
+
+def get_attendance_for_week(week_start):
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("SELECT id FROM attendance_days WHERE day_date=?", (week_start,))
+    day = c.fetchone()
+    if not day:
+        conn.close()
+        return {}
+    day_id = day[0]
+    c.execute("SELECT member_id, present FROM attendance_records WHERE day_id=?", (day_id,))
+    rows = c.fetchall()
+    conn.close()
+    return {member_id: present for member_id, present in rows}
 
 # run the app :D
 
