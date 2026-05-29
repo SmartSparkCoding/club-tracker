@@ -19,22 +19,25 @@
 <body class="dashboard-page">
     <header class="page-header">
         <h1>Welcome to <strong>{{ club_name }}</strong></h1>
-        <button onclick="goToMembers()">Back</button> <!-- this will be at the top right -->
+        <button onclick="goToAllergies()">Back</button> <!-- this will be at the top right -->
     </header>
 
     <main class="page-shell member-form-page">
-        <form class="main_div member-form-card" method="POST" action="{{ url_for('add_member') }}">
-            <h3>Add New Allergy to {{ club_name }}</h3>
-            <input type="text" name="name" placeholder="Allergy Name..." required>
-            <input type="text" name="description" placeholder="Description..." required>
-            <input type="select" name="severity" required>
-                <option value="" disabled selected>Severity...</option>
-                <option value="Mild">Mild</option>
-                <option value="Moderate">Moderate</option>
-                <option value="Severe">Severe</option>
-            </input>
+        <form class="main_div member-form-card" method="POST" action="{{ url_for('add_allergy_global') }}">
+            <select name="member_id" required>
+                <option value="" disabled selected>Select member</option>
+                {% for id, first, last in members %}
+                <option value="{{ id }}">{{ last }}, {{ first }}</option>
+                {% endfor %}
+            </select>
+            <select name="severity" required>
+                <option value="Severe">Severe</option><option value="Moderate">Moderate</option><option value="Mild">Mild</option>
+            </select>
+            <input name="allergy_text" placeholder="Allergy (e.g. Peanuts)" required>
             <button type="submit">Add Allergy</button>
         </form>
+
+    </main>
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>

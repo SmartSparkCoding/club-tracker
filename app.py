@@ -16,8 +16,6 @@ if load_dotenv is not None:
     load_dotenv(Path(__file__).parent / '.env')
 
 app = Flask(__name__)
-
-from pathlib import Path
 env_path = Path(__file__).parent / '.env'
 if env_path.exists():
     for line in env_path.read_text().splitlines():
@@ -119,9 +117,14 @@ def members():
 
 @app.route('/dashboard/allergies')
 def allergies():
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("""SELECT a.id, m.first_name, m.last_name, a.allergy_text, a.severity
+                 FROM allergies a JOIN members m ON a.member_id=m.id
+                 ORDER BY CASE a.severity WHEN 'Severe' THEN 1 WHEN 'Moderate' THEN 2 ELSE 3 END, m.last_name""")
+    rows = c.fetchall(); conn.close()
     user = "Club Leader"
     club_name = fetch_club_name_from_api()
-    return render_template("allergies.html", user=user, club_name=club_name)
+    return render_template('allergies.html', user=user, club_name=club_name, allergies=rows)
 
 @app.route('/dashboard/projects')
 def projects():
@@ -178,7 +181,12 @@ def member_detail(id):
     conn.close()
     return render_template('member_detail.html', member=member, attendance=attendance, projects=projects, allergies=allergies)
 
-
+@app.route('/dashboard/allergies/<int:id>/delete', methods=['POST'])
+def delete_allergy(id):
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("DELETE FROM allergies WHERE id=?", (id,))
+    conn.commit(); conn.close()
+    return redirect(url_for('allergies'))
 
 @app.route('/dashboard/members/<int:id>/allergies/add', methods=['POST'])
 def add_allergy(id):
@@ -240,6 +248,21 @@ def add_member():
     club_name = fetch_club_name_from_api()
 
     return redirect(url_for('member_detail', id=member_id))
+
+@app.route('/dashboard/allergies/new', methods=['POST'])
+def add_allergy_global():
+    member_id = int(request.form['member_id']); text = request.form['allergy_text']; severity = request.form['severity']
+    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
+    c.execute("INSERT INTO allergies(member_id, allergy_text, severity) VALUES (?,?,?)", (member_id, text, severity))
+    conn.commit(); conn.close()
+    return redirect(url_for('allergies'))
+
+@app.route('/dashboard/allergies/new')
+def allergy_new_form():
+    conn=sqlite3.connect('club_tracker.db'); c=conn.cursor()
+    c.execute("SELECT id,first_name,last_name FROM members ORDER BY last_name, first_name")
+    members=c.fetchall(); conn.close()
+    return render_template('allergy_new.html', members=members, club_name=os.getenv('CLUB_NAME'))
 
 # club api from HC - below is used to pull name (from env)
 

@@ -68,6 +68,34 @@ body {
   margin-bottom: 16px;
 }
 
+/* Style form controls on member/allergy add pages to match main_div inputs */
+.member-form-page form,
+.member-form-page .main_div,
+.member-form-page .member-form-card {
+  width: min(420px, 92vw);
+  margin: 0;
+}
+.member-form-page form input,
+.member-form-page form select,
+.member-form-page form button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.member-form-page form button {
+  background: #ec3750;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+.member-form-page form button:hover {
+  background: #ff8c37;
+}
+
 .main_div button:hover {
     background: #ff8c37;
     box-shadow: 0 6px 18px rgba(236, 55, 80, 0.45);
@@ -252,6 +280,12 @@ body {
   text-align: center;
 }
 
+.card h3 {
+  margin:0 0 0.6rem 0;
+  font-size:1rem;
+  color:#0f172a;
+}
+
 .card button {
     width: 100%;
     padding: 10px 12px;
@@ -385,22 +419,9 @@ body {
   border:1px dashed rgba(99,102,241,0.12);
 }
 
-.member-grid {
-  display:grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
-  gap:1rem;
-  align-items:start;
-}
-
-.member-grid > * {
+member-grid > * {
   min-width: 0;
 }
-
-
-.card {
-  background:#fafafa;
-  border-radius:10px;
-  padding:0.85rem;
   border:1px solid rgba(2,6,23,0.04);
 }
 .card h3 {
@@ -548,3 +569,11 @@ body {
 .page-shell.allergies-page .allergies-list { text-align:left; margin-top:8px; }
 .page-shell.allergies-page .add-allergy-btn { display:inline-flex !important; margin:0 !important; }
 .page-shell.allergies-page .add-allergy-btn { margin-top: 12px !important; }
+
+.allergy-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:#fff;margin-bottom:8px;border:1px solid #eee; margin-top:10px; margin-left: 10px; margin-right: 10px;}
+.allergy-left{min-width:0;overflow:hidden}
+.badge{padding:4px 8px;border-radius:999px;font-weight:700}
+.badge-severe{background:#fee2e2;color:#991b1b}
+.badge-moderate{background:#fff4e6;color:#92400e}
+.badge-mild{background:#ecfdf5;color:#065f46}
+.delete-btn{background:transparent;border:none;color:#ef4444;font-weight:700;cursor:pointer; font-size: 0.9rem;}

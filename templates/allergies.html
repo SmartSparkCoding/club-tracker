@@ -23,16 +23,19 @@
     </header>
 
     <main class="page-shell allergies-page">
-                <a class="add-allergy-btn" href="{{ url_for('add_allergy') }}">Add an Allergy</a>
+                <a class="add-member-btn add-allergy-btn" href="{{ url_for('allergy_new_form') }}">Add an Allergy</a>
     
-      <div class="allergies-list">
-        {% for id, name, description in allergies %}
-        <a class="allergy-card" href="{{ url_for('allergy_detail', id=id) }}">
-            <div class="allergy-name">{{ name }}</div>
-            <div class="allergy-description">{{ description }}</div>
-        </a>
+        {% for id, first, last, text, severity in allergies %}
+        <div class="allergy-row">
+        <div class="allergy-left"><strong>{{ last }}, {{ first }}</strong> — {{ text }}</div>
+        <div class="allergy-right">
+            <span class="badge badge-{{ severity|lower }}">{{ severity }}</span>
+            <form method="POST" action="{{ url_for('delete_allergy', id=id) }}" style="display:inline"><button class="delete-btn">Delete</button></form>
+        </div>
+        </div>
+        {% else %}
+        <div>No allergies recorded</div>
         {% endfor %}
-      </div>
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
