@@ -1,4 +1,3 @@
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAOIMrsepVj9PLubDYAeUA-Qowse2GlTXI",
   authDomain: "sterlo-kids-banking.firebaseapp.com",
@@ -9,25 +8,7 @@ const firebaseConfig = {
   appId: "1:39217932124:web:be09cd44487c4b904a8399"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-
-// -------------------------------------------
-
-/* firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-        // User is signed in.
-        localStorage.setItem("allowedLogin", "true");
-        document.getElementById('user_div').style.display = 'block'
-        document.getElementById('login_div').style.display = 'none'
-        window.location.href = "/dashboard"
-    }
-    else {
-        // No user is signed in.
-        document.getElementById('user_div').style.display = 'none'
-        document.getElementById('login_div').style.display = 'block'
-    }   
-}) */
 
 function login() {
   var userEmail = document.getElementById('email_field').value

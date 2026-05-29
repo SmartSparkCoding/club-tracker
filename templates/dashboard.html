@@ -1,5 +1,4 @@
 <script>
-    // lock them out of using /dashboard if they aren't logged in
     if (localStorage.getItem("allowedLogin") !== "true") {
         window.location.href = "/";
     }
@@ -23,7 +22,7 @@
 <body class="dashboard-page">
     <header class="page-header">
         <h1>Welcome to <strong>{{ club_name }}</strong></h1>
-        <button onclick="logout()">Logout</button> <!-- this will be at the top right -->
+        <button onclick="logout()">Logout</button>
     </header>
     
     <main class="page-shell">

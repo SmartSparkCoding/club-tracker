@@ -26,7 +26,6 @@ if env_path.exists():
         k, v = line.split('=', 1)
         os.environ.setdefault(k, v)
 
-# Initialize the database
 def init_db():
     conn = sqlite3.connect('club_tracker.db')
     c = conn.cursor()
@@ -39,7 +38,6 @@ def init_db():
                  year INTEGER,
                  created_at TEXT DEFAULT CURRENT_TIMESTAMP
                  )''')
-    # ensure `email` column exists (safe ALTER without UNIQUE)
     cols = [r[1] for r in c.execute("PRAGMA table_info(members)").fetchall()]
     if 'email' not in cols:
         c.execute("ALTER TABLE members ADD COLUMN email TEXT")
@@ -91,20 +89,18 @@ def init_db():
     conn.commit()
     conn.close()
 
-# define routes
+def render_page(template_name, **context):
+    page_context = get_common_context()
+    page_context.update(context)
+    return render_template(template_name, **page_context)
 
 @app.route('/')
 def home():
-    user = "Club Leader"
-    return render_template("signin.html", user=user)
+    return render_page("signin.html")
 
 @app.route('/dashboard')
 def dashboard():
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
-    hcb = getHCBData()
-    total_projects = get_projects_total()
-    return render_template("dashboard.html", user=user, club_name=club_name, hcb=hcb, total_projects=total_projects)
+    return render_page("dashboard.html")
 
 @app.route('/dashboard/members')
 def members():
@@ -113,9 +109,7 @@ def members():
     c.execute("SELECT id, first_name, last_name, created_at FROM members ORDER BY last_name, first_name")
     rows = c.fetchall()
     conn.close()
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
-    return render_template("members.html", user=user, club_name=club_name, members=rows)
+    return render_page("members.html", members=rows)
 
 @app.route('/dashboard/allergies')
 def allergies():
@@ -124,9 +118,7 @@ def allergies():
                  FROM allergies a JOIN members m ON a.member_id=m.id
                  ORDER BY CASE a.severity WHEN 'Severe' THEN 1 WHEN 'Moderate' THEN 2 ELSE 3 END, m.last_name""")
     rows = c.fetchall(); conn.close()
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
-    return render_template('allergies.html', user=user, club_name=club_name, allergies=rows)
+    return render_page('allergies.html', allergies=rows)
 
 @app.route('/dashboard/projects')
 def projects():
@@ -137,16 +129,12 @@ def projects():
     c.execute("SELECT COALESCE(SUM(payout_amount),0) FROM projects")
     total = c.fetchone()[0] or 0
     conn.close()
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
     total_display = f"${float(total):,.2f}"
-    return render_template("projects.html", user=user, club_name=club_name, projects=rows, projects_total=total_display)
+    return render_page("projects.html", projects=rows, projects_total=total_display)
 
 @app.route('/dashboard/projects/new')
 def add_project_form():
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
-    return render_template("project_new.html", user=user, club_name=club_name)
+    return render_page("project_new.html")
 
 @app.route('/dashboard/projects/new', methods=['POST'])
 def add_project():
@@ -191,16 +179,11 @@ def project_detail(id):
     c.execute("SELECT id, first_name, last_name FROM members ORDER BY last_name, first_name")
     all_members = c.fetchall()
 
-    # compute display values
     payout_amount = project[6] if project and project[6] is not None else 0
     payout_display = f"${float(payout_amount):,.2f}"
     conn.close()
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
-    return render_template(
+    return render_page(
         "project_detail.html",
-        user=user,
-        club_name=club_name,
         project=project,
         members=members,
         all_members=all_members,
@@ -259,14 +242,10 @@ def edit_project(id):
 @app.route('/dashboard/attendance')
 def attendance():
     week_start = get_week_start()
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
     has_attendance = attendance_week_exists(week_start)
     button_text = "Edit This Weeks Attendance" if has_attendance else "Take Attendance for This Week"
-    return render_template(
+    return render_page(
         "attendance.html",
-        user=user,
-        club_name=club_name,
         week_start=week_start,
         has_attendance=has_attendance,
         button_text=button_text,
@@ -277,13 +256,9 @@ def attendance_take():
     week_start = get_week_start()
     members = get_members_for_attendance()
     existing = get_attendance_for_week(week_start)
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
     has_attendance = attendance_week_exists(week_start)
-    return render_template(
+    return render_page(
         "attendance_take.html",
-        user=user,
-        club_name=club_name,
         week_start=week_start,
         members=members,
         existing=existing,
@@ -299,12 +274,8 @@ def save_attendance():
         value = request.form.get(f'attendance_{member_id}')
         if value not in ('present', 'absent'):
             existing = get_attendance_for_week(week_start)
-            user = "Club Leader"
-            club_name = fetch_club_name_from_api()
-            return render_template(
+            return render_page(
                 "attendance_take.html",
-                user=user,
-                club_name=club_name,
                 week_start=week_start,
                 members=members,
                 existing=existing,
@@ -327,8 +298,6 @@ def save_attendance():
 
 @app.route('/dashboard/members/<int:id>/edit', methods=['POST'])
 def edit_member(id):
-    # accept optional fields (email, first_name, last_name)
-    club_name = fetch_club_name_from_api()
     first = request.form.get('first_name')
     last = request.form.get('last_name')
     email = request.form.get('email')
@@ -352,7 +321,6 @@ def edit_member(id):
 @app.route('/dashboard/members/<int:id>')
 def member_detail(id):
     conn = sqlite3.connect('club_tracker.db')
-    club_name = fetch_club_name_from_api()
     c = conn.cursor()
     c.execute("SELECT first_name,last_name,year,created_at,email FROM members WHERE id=?", (id,))
     member = c.fetchone()
@@ -378,33 +346,15 @@ def delete_allergy(id):
 @app.route('/dashboard/members/<int:id>/allergies/add', methods=['POST'])
 def add_allergy(id):
     allergy_text = request.form.get('allergy_text')
-    club_name = fetch_club_name_from_api()
     severity = request.form.get('severity')
     conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
     c.execute("INSERT INTO allergies(member_id, allergy_text, severity) VALUES (?,?,?)", (id, allergy_text, severity))
     conn.commit(); conn.close()
     return redirect(url_for('member_detail', id=id))
 
-
-
-@app.route('/dashboard/attendance/record', methods=['POST'])
-def record_attendance():
-    day = request.form['day_date']  # YYYY-MM-DD
-    member_id = int(request.form['member_id'])
-    club_name = fetch_club_name_from_api()
-    conn = sqlite3.connect('club_tracker.db'); c = conn.cursor()
-    c.execute("INSERT OR IGNORE INTO attendance_days(day_date) VALUES (?)", (day,))
-    c.execute("SELECT id FROM attendance_days WHERE day_date=?", (day,))
-    day_id = c.fetchone()[0]
-    c.execute("INSERT OR REPLACE INTO attendance_records(day_id, member_id, present) VALUES (?,?,1)", (day_id, member_id))
-    conn.commit(); conn.close()
-    return redirect(url_for('member_detail', id=member_id))
-
 @app.route('/dashboard/members/new')
 def add_member_form():
-    user = "Club Leader"
-    club_name = fetch_club_name_from_api()
-    return render_template("member_new.html", user=user, club_name=club_name)
+    return render_page("member_new.html")
 
 @app.route('/dashboard/members/new', methods=['POST'])
 def add_member():
@@ -423,8 +373,6 @@ def add_member():
     conn.commit()
     conn.close()
 
-    club_name = fetch_club_name_from_api()
-
     return redirect(url_for('member_detail', id=member_id))
 
 @app.route('/dashboard/allergies/new', methods=['POST'])
@@ -440,9 +388,7 @@ def allergy_new_form():
     conn=sqlite3.connect('club_tracker.db'); c=conn.cursor()
     c.execute("SELECT id,first_name,last_name FROM members ORDER BY last_name, first_name")
     members=c.fetchall(); conn.close()
-    return render_template('allergy_new.html', members=members, club_name=os.getenv('CLUB_NAME'))
-
-# club api from HC - below is used to pull name (from env)
+    return render_page('allergy_new.html', members=members)
 
 def fetch_club_name_from_api():
     fallback_name = "Error Loading Club Name"
@@ -451,7 +397,6 @@ def fetch_club_name_from_api():
     token = os.getenv("CLUBAPI_TOKEN", "").strip()
 
     query = urlencode({"name": club_name})
-    # correct public endpoint for the Club API
     url = f"https://clubapi.hackclub.com/club?{query}"
 
     headers = {"Accept": "application/json"}
@@ -514,7 +459,6 @@ def getHCBData():
             if isinstance(u0, dict):
                 manager_name = u0.get("name") or u0.get("id") or "Unknown"
 
-        # balances keys may be named slightly differently; prefer *_cents keys
         def safe_int(d, *keys):
             for k in keys:
                 v = d.get(k)
@@ -612,8 +556,6 @@ def get_attendance_for_week(week_start):
     rows = c.fetchall()
     conn.close()
     return {member_id: present for member_id, present in rows}
-
-# run the app :D
 
 if __name__ == '__main__':
     init_db()

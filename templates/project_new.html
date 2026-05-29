@@ -1,5 +1,4 @@
 <script>
-    // lock them out of using /dashboard if they aren't logged in
     if (localStorage.getItem("allowedLogin") !== "true") {
         window.location.href = "/";
     }

@@ -68,7 +68,6 @@ body {
   margin-bottom: 16px;
 }
 
-/* Style form controls on member/allergy add pages to match main_div inputs */
 .member-form-page form,
 .member-form-page .main_div,
 .member-form-page .member-form-card {
