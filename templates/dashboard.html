@@ -38,7 +38,7 @@
             {% endif %}
             <div class="hcb-meta">
                 <div class="hcb-title">{{ hcb.org_name }} <span class="hcb-slug">({{ hcb.org_slug }})</span></div>
-                <div class="hcb-stats">Manager: {{ hcb.manager_name }} • Balance: <strong>{{ hcb.balance_display }}</strong> • Raised: {{ hcb.total_raised_display }}</div>
+                <div class="hcb-stats">Manager: {{ hcb.manager_name }} • Balance: <strong>{{ hcb.balance_display }}</strong> • Raised: {{ hcb.total_raised_display }} • Total Project Payouts: <strong>${{ "%.2f" | format(total_projects) }}</strong></div>
             </div>
             <div class="hcb-actions">
                 <a class="hcb-link" href="{{ hcb.hcb_url }}" target="_blank" rel="noopener">View on HCB</a>

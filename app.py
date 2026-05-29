@@ -102,7 +102,8 @@ def dashboard():
     user = "Club Leader"
     club_name = fetch_club_name_from_api()
     hcb = getHCBData()
-    return render_template("dashboard.html", user=user, club_name=club_name, hcb=hcb)
+    total_projects = get_projects_total()
+    return render_template("dashboard.html", user=user, club_name=club_name, hcb=hcb, total_projects=total_projects)
 
 @app.route('/dashboard/members')
 def members():
@@ -490,6 +491,14 @@ def getHCBData():
         out = fallback.copy()
         out["error"] = str(e)
         return out
+
+def get_projects_total():
+    conn = sqlite3.connect('club_tracker.db')
+    c = conn.cursor()
+    c.execute("SELECT COALESCE(SUM(payout_amount), 0) FROM projects")
+    total = c.fetchone()[0] or 0
+    conn.close()
+    return total
 
 # run the app :D
 
