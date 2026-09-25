@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import os
 import json
+import time
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
@@ -390,7 +391,17 @@ def allergy_new_form():
     members=c.fetchall(); conn.close()
     return render_page('allergy_new.html', members=members)
 
+CLUB_NAME_CACHE_TTL = 600
+
+_club_name_cache = {"value": None, "expires": 0.0}
+
+
 def fetch_club_name_from_api():
+    cached = _club_name_cache
+    now = time.monotonic()
+    if cached["value"] is not None and now < cached["expires"]:
+        return cached["value"]
+
     fallback_name = "Error Loading Club Name"
 
     club_name = os.getenv("CLUB_NAME", fallback_name)
@@ -410,9 +421,13 @@ def fetch_club_name_from_api():
             raw = resp.read().decode("utf-8")
             data = json.loads(raw)
             api_name = data.get("club_name") or data.get("fields", {}).get("club_name")
-            return api_name or club_name
+            resolved = api_name or club_name
     except (HTTPError, URLError, TimeoutError, json.JSONDecodeError):
         return club_name
+
+    cached["value"] = resolved
+    cached["expires"] = time.monotonic() + CLUB_NAME_CACHE_TTL
+    return resolved
 
 
 
